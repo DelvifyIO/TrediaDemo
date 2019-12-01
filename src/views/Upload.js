@@ -108,7 +108,7 @@ function NewModal(props){
                       id="size"
                       placeholder="Size"
                       onChange={updateValue}
-                      value={values.modelNumber}
+                      value={values.size}
                   />
                 </Col>
               </FormGroup>
