@@ -83,7 +83,7 @@ function IndexNavbar() {
           >
             <Nav navbar>
               <NavItem>
-                <NavLink href="/upload">
+                <NavLink href="/#/upload">
                   <i className="now-ui-icons arrows-1_cloud-upload-94"></i>
                   <p>Upload RFP</p>
                 </NavLink>

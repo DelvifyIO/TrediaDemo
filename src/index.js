@@ -17,7 +17,7 @@
 */
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import store from "./store";
@@ -34,32 +34,18 @@ import NucleoIcons from "views/NucleoIcons.js";
 import LoginPage from "views/examples/LoginPage.js";
 import LandingPage from "views/examples/LandingPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
+import DefaultLayout from "./containers";
 
 ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter>
+      <HashRouter>
         <Switch>
           <Switch>
-            <Route path="/index" render={props => <Index {...props} />} />
-            <Route path="/upload" render={props => <Upload {...props} />} />
-            <Route
-              path="/nucleo-icons"
-              render={props => <NucleoIcons {...props} />}
-            />
-            <Route
-              path="/landing-page"
-              render={props => <LandingPage {...props} />}
-            />
-            <Route
-              path="/profile-page"
-              render={props => <ProfilePage {...props} />}
-            />
-            <Route path="/login-page" render={props => <LoginPage {...props} />} />
-            <Redirect to="/index" />
-            <Redirect from="/" to="/index" />
+            <Route exact path="/upload" name="Upload" render={props => <Upload {...props} />} />
+            <Route exact path="/" name="Home" render={props => <Index {...props} />} />
           </Switch>
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
     </Provider>,
   document.getElementById("root")
 );
