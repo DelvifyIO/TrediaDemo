@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { connect } from "react-redux";
 import _ from 'lodash';
 
@@ -15,6 +15,7 @@ import {
     CardText, FormGroup, Label, Input,
 } from "reactstrap";
 import {SEARCH_STATUS} from "../../utils/enum";
+import {setFilters} from "../../actions/searchAction";
 
 // core components
 
@@ -26,16 +27,19 @@ const mapStateToProps = (state) => ({
 });
 
 function Filter(props) {
-    const { data } = props;
-    return data.map((datum, index) =>
-        <FormGroup check inline key={`${index}_${datum}`}>
+    const { data, onChange, category } = props;
+    if (!data) return null;
+    return Object.keys(data || {}).map((key, index) =>
+        <FormGroup check inline key={`${index}_${key}`}>
             <Label check>
                 <Input
                     defaultValue="option1"
-                    id="inlineCheckbox1"
+                    id={`${category}_${key}`}
                     type="checkbox"
+                    checked={data[key]}
+                    onChange={() => onChange(category, key)}
                 />
-                {datum}
+                {key}
                 <span className="form-check-sign">
             <span className="check"/>
           </span>
@@ -75,10 +79,41 @@ function Item(props) {
 
 function Search(props) {
     const { query, status, result, filters } = props;
-    const filterState = useState(filters);
+    const [filterState, setFilterState] = useState(filters);
+    const [resultState, setResultState] = useState(result);
 
-    const updateFilter = useCallback((key, category) => {
-    }, [filterState]);
+    useEffect(() => {
+        setFilterState(filters);
+    }, [filters]);
+
+    useEffect(() => {
+        setResultState(result);
+    }, [result]);
+
+    const filteredKey = useCallback((array) => {
+        return Object.keys(array).filter((key) => array[key]);
+    }, []);
+
+    const updateFilter = useCallback((category, key) => {
+        const tempFilter = _.clone(filterState);
+        tempFilter[category][key] = !tempFilter[category][key];
+        setFilterState(tempFilter);
+
+        const filteredResult = result.filter((item) => {
+            return tempFilter['brands'][item.brand] &&
+                _.intersection(item.material, filteredKey(tempFilter['materials'])).length > 0 &&
+                tempFilter['origins'][item.origin] &&
+                _.intersection(item.feature, filteredKey(tempFilter['features'])).length > 0 &&
+                _.intersection(item.use, filteredKey(tempFilter['usages'])).length > 0 &&
+                _.intersection(item.size, filteredKey(tempFilter['sizes'])).length > 0 &&
+                _.intersection(item.tapeColor, filteredKey(tempFilter['tapeColors'])).length > 0 &&
+                _.intersection(item.teethColor, filteredKey(tempFilter['teethColors'])).length > 0;
+        });
+        setResultState(filteredResult);
+
+    }, [filterState, resultState]);
+
+
 
     return (
         <>
@@ -98,14 +133,14 @@ function Search(props) {
                       </Row>
                       {
                           <div className="mb-4">
-                              <Row><Col md={2} className="mt-2">Brand:</Col><Col><Filter data={filters.brands} onChange={(key) => {}}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Material:</Col><Col><Filter data={filters.materials}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Origin:</Col><Col><Filter data={filters.origins}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Feature:</Col><Col><Filter data={filters.features}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Usage:</Col><Col><Filter data={filters.usages}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Size:</Col><Col><Filter data={filters.sizes}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Tape Color:</Col><Col><Filter data={filters.tapeColors}/></Col></Row>
-                              <Row><Col md={2} className="mt-2">Teeth Color:</Col><Col><Filter data={filters.teethColors}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Brand:</Col><Col><Filter category="brands" data={filterState.brands} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Material:</Col><Col><Filter category="materials" data={filterState.materials} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Origin:</Col><Col><Filter category="origins" data={filterState.origins} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Feature:</Col><Col><Filter category="features" data={filterState.features} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Usage:</Col><Col><Filter category="usages" data={filterState.usages} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Size:</Col><Col><Filter category="sizes" data={filterState.sizes} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Tape Color:</Col><Col><Filter category="tapeColors" data={filterState.tapeColors} onChange={updateFilter}/></Col></Row>
+                              <Row><Col md={2} className="mt-2">Teeth Color:</Col><Col><Filter category="teethColors" data={filterState.teethColors} onChange={updateFilter}/></Col></Row>
                           </div>
                       }
                       {
@@ -120,12 +155,20 @@ function Search(props) {
                           status === SEARCH_STATUS.SUCCESS &&
                               <Row className="justify-content-md-center">
                                   {
-                                      result.map((item, index) =>
+                                      resultState.map((item, index) =>
                                           <Col className="text-center" key={`${item.name}_${index}`}>
                                             <Item {...item} />
                                           </Col>
                                       )
                                   }
+                              </Row>
+                      }
+                      {
+                          status === SEARCH_STATUS.ERROR &&
+                              <Row className="justify-content-md-center">
+                                  <Col className="text-center" lg="8" md="12">
+                                      <span className="text-danger">Error</span>
+                                  </Col>
                               </Row>
                       }
                   </Container>

@@ -192,6 +192,7 @@ function Upload() {
   const [rows, setRows] = useState([]);
   const [editData, setEditData] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const editRow = useCallback((values) => {
     const temp = _.clone(rows);
@@ -214,6 +215,10 @@ function Upload() {
     }
     setIsModalOpen(!isModalOpen);
   }, [isModalOpen]);
+
+  const toggleSuccessModal = useCallback(() => {
+    setIsSuccessModalOpen(!isSuccessModalOpen);
+  }, [isSuccessModalOpen]);
 
   const onDropAccepted = useCallback(acceptedFiles => {
     const file = acceptedFiles[0];
@@ -296,11 +301,34 @@ function Upload() {
                 </tbody>
               </Table>
               <Row className="float-right no-gutters">
-                <Button size="sm" color="info" onClick={toggleModal}><i className="now-ui-icons ui-1_simple-add mr-2"/> New</Button>
-                <Button size="sm" color="success" disabled={rows.length <= 0}>Send</Button>
+                <Button size="sm" color="info" onClick={() => toggleModal()}><i className="now-ui-icons ui-1_simple-add mr-2"/> New</Button>
+                <Button size="sm" color="success" disabled={rows.length <= 0} onClick={toggleSuccessModal}>Send</Button>
               </Row>
 
               <NewModal onClose={toggleModal} isModalOpen={isModalOpen} onAddRow={addRow} onEditRow={editRow} defaultData={editData} />
+              <Modal
+                  isOpen={isSuccessModalOpen}
+                  className="modal-sm"
+                  modalClassName="bd-example-modal-sm"
+                  toggle={toggleSuccessModal}
+              >
+                <div className="modal-header">
+                  <h4 className="modal-title" id="mySmallModalLabel">
+                    Done
+                  </h4>
+                  <button
+                      aria-label="Close"
+                      className="close"
+                      type="button"
+                      onClick={toggleSuccessModal}
+                  >
+                    <span aria-hidden={true}>×</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  We have received the RFP. Thank you.
+                </div>
+              </Modal>
             </div>
 
             <div className="d-flex justify-content-center align-items-center mt-2 mb-2">

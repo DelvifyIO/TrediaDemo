@@ -2,6 +2,7 @@ const SEARCH_STATUS = {
     IDLE: 'IDLE',
     SEARCHING: 'SEARCHING',
     SUCCESS: 'SUCCESS',
+    ERROR: 'ERROR',
 };
 
 

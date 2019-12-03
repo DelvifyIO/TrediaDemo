@@ -12,14 +12,14 @@ const initialState = {
   status: SEARCH_STATUS.IDLE,
   result: [],
   filters: {
-    brands: [],
-    materials: [],
-    features: [],
-    origins: [],
-    usages: [],
-    sizes: [],
-    tapeColors: [],
-    teethColors: [],
+    brands: {},
+    materials: {},
+    features: {},
+    origins: {},
+    usages: {},
+    sizes: {},
+    tapeColors: {},
+    teethColors: {},
   },
 };
 
