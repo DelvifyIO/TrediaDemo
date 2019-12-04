@@ -42,33 +42,34 @@ export const setFilters = (filters) => dispatch => {
 };
 
 export const search = (query) => dispatch => {
-  // const like = (keyword, string) => {
-  //   return string.toLowerCase().split(' ').includes(keyword.toLowerCase());
-  // };
+  const like = (keyword, string) => {
+    return string.toLowerCase().split(' ').includes(keyword.toLowerCase());
+  };
 
-  // const match = (query, string) => {
-  //   let points = 0;
-  //   query.split(' ').forEach((keyword) => {
-  //     if (like(keyword, string)) {
-  //       points ++;
-  //     }
-  //   });
-  //   return points;
-  // };
+  const match = (query, string) => {
+    let points = 0;
+    query.split(' ').forEach((keyword) => {
+      if (like(keyword, string)) {
+        points ++;
+      }
+    });
+    return points;
+  };
 
-  // const resultTemp = data.map((datum) => {
-  //   const points =
-  //       match(query, datum.description) +
-  //       match(query, datum.brand) +
-  //       match(query, datum.name) +
-  //       datum.use.reduce((sum, use) => sum + match(query, use), 0) +
-  //       datum.feature.reduce((sum, feature) => sum + match(query, feature), 0) +
-  //       datum.tapeColor.reduce((sum, tapeColor) => sum + match(query, tapeColor), 0) +
-  //       datum.teethColor.reduce((sum, teethColor) => sum + match(query, teethColor), 0) +
-  //       datum.material.reduce((sum, material) => sum + match(query, material), 0);
-  //   return { points, datum };
-  // });
-  // resultTemp.sort((a, b) => b.points - a.points);
+  const resultTemp = data.map((datum) => {
+    const points =
+        match(query, datum.description) +
+        match(query, datum.brand) +
+        match(query, datum.name) +
+        datum.use.reduce((sum, use) => sum + match(query, use), 0) +
+        datum.feature.reduce((sum, feature) => sum + match(query, feature), 0) +
+        datum.tapeColor.reduce((sum, tapeColor) => sum + match(query, tapeColor), 0) +
+        datum.teethColor.reduce((sum, teethColor) => sum + match(query, teethColor), 0) +
+        datum.material.reduce((sum, material) => sum + match(query, material), 0);
+    return { points, datum };
+  });
+  resultTemp.sort((a, b) => b.points - a.points);
+  // const result = resultTemp.filter((datum) => datum.points > 0).map((datum) => datum.datum).slice(0, 18);
 
   fetch(`http://52.247.209.53:5001/computeSimilarity?text=${query}`)
       .then((result) => {

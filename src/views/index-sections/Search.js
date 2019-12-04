@@ -16,6 +16,7 @@ import {
 } from "reactstrap";
 import {SEARCH_STATUS} from "../../utils/enum";
 import {setFilters} from "../../actions/searchAction";
+import CardFooter from "reactstrap/es/CardFooter";
 
 // core components
 
@@ -50,8 +51,11 @@ function Filter(props) {
 
 function Item(props) {
     const { imageUrl, name, description, brand, material, feature, origin, size, tapeColor, teethColor, use } = props;
+    const defaultColor = ['Red', 'Yellow', 'Blue', 'Green', 'Orange', 'White', 'Pink', 'Black'];
+    const colors = _.intersection(_.union(tapeColor, teethColor), defaultColor);
+    const others = _.filter(_.union(tapeColor, teethColor), (color) => !defaultColor.includes(color));
     return (
-        <Card style={{ width: "20rem", height: '35rem' }} data-background-color="white" className="d-flex flex-column">
+        <Card style={{ width: "20rem", height: '36rem' }} data-background-color="white" className="d-flex flex-column">
             <CardImg alt={name} src={imageUrl} top style={{ height: '320px', objectFit: 'cover' }}/>
             <CardBody className="d-flex flex-column flex-grow-1">
                 <CardTitle tag="h4" className="text-dark mt-0">{name}</CardTitle>
@@ -73,6 +77,23 @@ function Item(props) {
                      */
                 }
             </CardBody>
+            <CardFooter className="position-absolute w-100" style={{ bottom: 0 }}>
+                <Row className="no-gutters pr-2 pl-2 justify-content-between align-items-center">
+                    <Row className="align-items-center no-gutters" style={{ marginBottom: '0.5rem' }}>
+                    {
+                        colors.map((color) => {
+                            return <div style={{ width: '15px', height: '15px', backgroundColor: color, marginRight: '5px', borderRadius: '10px', border: "solid 1px gray" }}/>
+                        })
+                    }
+                    {
+                        others.map((color) =>
+                            <div style={{ color: 'gray', border: 'solid 1px gray', borderRadius: '10px', paddingRight: '1px', paddingLeft: '1px', fontSize: '7pt', marginRight: '5px'}}>{color}</div>
+                        )
+                    }
+                    </Row>
+                    <h6 className="text-black-50">{brand}</h6>
+                </Row>
+            </CardFooter>
         </Card>
     )
 }
