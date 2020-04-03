@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { connect } from "react-redux";
 
 // reactstrap components
@@ -7,7 +7,7 @@ import {Col, Container, Form, FormGroup, Input, InputGroup, InputGroupAddon, Inp
 import Button from "reactstrap/es/Button";
 // core components
 
-import { setQuery, setSearchingStatus, search } from "../../actions/searchAction";
+import { setSearchingStatus, search, searchImage } from "../../actions/searchAction";
 import {SEARCH_STATUS} from "../../utils/enum";
 
 import zippers from "../../assets/img/zippers.png";
@@ -24,7 +24,7 @@ import rhinestones from "../../assets/img/rhinestones.png";
 const mapStateToProps = (state) => ({
     query: state.search.query,
 });
-const mapDispatchToProps = { setQuery, setSearchingStatus, search };
+const mapDispatchToProps = { setSearchingStatus, search, searchImage };
 
 
 function CategoryButton(props) {
@@ -42,8 +42,11 @@ function CategoryButton(props) {
 function IndexHeader(props) {
   let pageHeader = React.createRef();
 
-  const { query, setQuery, setSearchingStatus, search } = props;
+  const { setSearchingStatus, search, searchImage } = props;
   const [inputFocus, setInputFocus] = useState(false);
+  const [query, setQuery] = useState(null);
+  const uploadInput = useRef(null);
+
   useEffect(() => {
     if (window.innerWidth > 991) {
       const updateScroll = () => {
@@ -57,6 +60,12 @@ function IndexHeader(props) {
       };
     }
   });
+
+  const onUploadButtonClick = useCallback((e) => {
+    e.preventDefault();
+    uploadInput.current.click();
+  },[]);
+
   const onSearch = useCallback((e) => {
     e.preventDefault();
     setSearchingStatus(SEARCH_STATUS.SEARCHING)
@@ -67,6 +76,17 @@ function IndexHeader(props) {
                 .scrollIntoView();
         });
   }, [query]);
+
+  const onImageSearch = useCallback((e) => {
+    e.persist();
+    setSearchingStatus(SEARCH_STATUS.SEARCHING)
+        .then(() => {
+          searchImage(e.target.files[0]);
+          document
+              .getElementById("search-section")
+              .scrollIntoView();
+        });
+  }, []);
 
   return (
     <>
@@ -100,9 +120,19 @@ function IndexHeader(props) {
                       onBlur={() => setInputFocus(false)}
                       onChange={(e) => { setQuery(e.target.value); }}
                     />
+                    <Input
+                      type="file"
+                      onChange={onImageSearch}
+                      innerRef={uploadInput}
+                      accept="image/*"
+                      hidden
+                    />
                     <InputGroupAddon addonType="append">
                       <InputGroupText>
-                        <Button color="neutral" outline={false} block={false} size={"size"} className="p-1 m-1 text-secondary">
+                        <Button color="neutral" outline={false} block={false} size={"size"} className="p-1 m-1 text-secondary" type="button" onClick={onUploadButtonClick}>
+                          <i className="fa fa-image"/>
+                        </Button>
+                        <Button color="neutral" outline={false} block={false} size={"size"} className="p-1 m-1 text-secondary" type="submit">
                           <i className="fa fa-search"/>
                         </Button>
                       </InputGroupText>
@@ -111,18 +141,21 @@ function IndexHeader(props) {
                 </h2>
               </FormGroup>
             </Form>
-            <Row className="flex-wrap justify-content-center align-items-center">
-              <CategoryButton icon={zippers} label="Zippers and Sliders" active />
-              <CategoryButton icon={fasteners} label="Fasteners" />
-              <CategoryButton icon={tags} label="Labels and Tags" />
-              <CategoryButton icon={buttons} label="Buttons" />
-              <CategoryButton icon={beads} label="Beads" />
-              <CategoryButton icon={buckles} label="Buckles" />
-              <CategoryButton icon={eyelets} label="Eyelets" />
-              <CategoryButton icon={hooks} label="Hooks" />
-              <CategoryButton icon={ribbons} label="Ribbons" />
-              <CategoryButton icon={rhinestones} label="Rhinestones" />
-            </Row>
+            {/*
+              <Row className="flex-wrap justify-content-center align-items-center">
+                <CategoryButton icon={zippers} label="Zippers and Sliders" active />
+                <CategoryButton icon={fasteners} label="Fasteners" />
+                <CategoryButton icon={tags} label="Labels and Tags" />
+                <CategoryButton icon={buttons} label="Buttons" />
+                <CategoryButton icon={beads} label="Beads" />
+                <CategoryButton icon={buckles} label="Buckles" />
+                <CategoryButton icon={eyelets} label="Eyelets" />
+                <CategoryButton icon={hooks} label="Hooks" />
+                <CategoryButton icon={ribbons} label="Ribbons" />
+                <CategoryButton icon={rhinestones} label="Rhinestones" />
+              </Row>*/
+            }
+
 
           </div>
         </Container>

@@ -3,12 +3,14 @@ import {
   SET_SEARCHING_STATUS,
   SET_RESULT,
   SET_FILTERS,
+  SET_IMAGE,
 } from "../actions/types";
 
 import { SEARCH_STATUS } from "../utils/enum";
 
 const initialState = {
   query: null,
+  image: null,
   status: SEARCH_STATUS.IDLE,
   result: [],
   filters: {
@@ -29,6 +31,11 @@ export default function(state = initialState, { type, payload }) {
       return {
         ...state,
         query: payload.query,
+      };
+    case SET_IMAGE:
+      return {
+        ...state,
+        image: payload.image,
       };
     case SET_SEARCHING_STATUS:
       return {
