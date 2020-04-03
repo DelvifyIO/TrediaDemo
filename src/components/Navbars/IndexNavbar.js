@@ -57,7 +57,7 @@ function IndexNavbar() {
               href="/"
               id="navbar-brand"
             >
-              Tredia
+              Mitsubishi
             </NavbarBrand>
             <UncontrolledTooltip target="#navbar-brand">
               Powered by Delvify.io

@@ -103,9 +103,8 @@ function IndexHeader(props) {
             <img
               alt="..."
               className="n-logo"
-              src={require("assets/img/temp-logo.png")}
+              src={require("assets/img/mitsubishi-logo.png")}
             />
-            <h1 className="h1-seo">Tredia</h1>
             <Form onSubmit={onSearch}>
               <FormGroup>
                 <h4>What are you looking for?</h4>
